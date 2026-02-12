@@ -56,3 +56,21 @@ det = run.Detector('jungfrau')
 evt = next(run.events())
 ```
 
+### test slurm script
+```
+#!/bin/bash
+#SBATCH --partition=milano
+#SBATCH --account=lcls:mfx101210926
+#SBATCH --ntasks=32
+#SBATCH --cpus-per-task=1
+#SBATCH --nodes=1
+#SBATCH --time=10:00:00
+#SBATCH -J powder
+#SBATCH -o powder.out
+#SBATCH -e powder.out
+
+source /sdf/group/lcls/ds/ana/sw/conda2/manage/bin/psconda.sh
+
+echo mpirun -n 32 python powder.py $@
+mpirun -n 32 python powder.py $@
+```
