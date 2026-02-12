@@ -50,11 +50,26 @@ timing          | raw
 
 (ps_20241122) [amorgan@sdfiana025 analysis]$ ipython
 import psana
-ds = psana.DataSource(exp='mfx100852324', run=77, dir='/sdf/data/lcls/ds/prj/public01/xtc')
+ds = psana.DataSource(exp='mfx100852324', run=79, dir='/sdf/data/lcls/ds/prj/public01/xtc')
 run = next(ds.runs())
 det = run.Detector('jungfrau')
 evt = next(run.events())
+
+# cal.shape = (32, 512, 1024)
+# cal.dtype = dtype('float32')
+cal = det.raw.calib(evt)
+
+# im.dtype = dtype('float32')
+# im.shape = (4216, 4432)
+im = det.raw.image(evt)
+
+
+for evt in run.events():
+  im = det.raw.image(evt)
+  if np.sum(im) > 0:
+    break
 ```
+
 
 ### test slurm script
 ```
