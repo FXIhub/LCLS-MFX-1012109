@@ -50,6 +50,9 @@ timing          | raw
 
 (ps_20241122) [amorgan@sdfiana025 analysis]$ ipython
 import psana
+import numpy as np
+import pyqtgraph as pg
+
 ds = psana.DataSource(exp='mfx100852324', run=79, dir='/sdf/data/lcls/ds/prj/public01/xtc')
 run = next(ds.runs())
 det = run.Detector('jungfrau')
@@ -68,10 +71,14 @@ for evt in run.events():
   im = det.raw.image(evt)
   if np.sum(im) > 0:
     break
+
+%gui qt
+pg.show(im)
 ```
 
 
 ### test slurm script
+test.slurm:
 ```
 #!/bin/bash
 #SBATCH --partition=milano
@@ -80,12 +87,11 @@ for evt in run.events():
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --time=10:00:00
-#SBATCH -J powder
-#SBATCH -o powder.out
-#SBATCH -e powder.out
+#SBATCH -J test
 
 source /sdf/group/lcls/ds/ana/sw/conda2/manage/bin/psconda.sh
 
-echo mpirun -n 32 python powder.py $@
-mpirun -n 32 python powder.py $@
+echo mpirun -n 32 test.py
 ```
+
+then: `sbatch test.slurm`
